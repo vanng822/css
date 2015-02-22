@@ -97,3 +97,23 @@ func TestValueWhiteSpace(t *testing.T) {
 	assert.Equal(t, "10px 0 0 10px", css.CssRuleList[0].Style.Styles["padding"].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
 }
+
+func TestStarSelector(t *testing.T) {
+	css := Parse("* { text-rendering: optimizelegibility; }")
+
+	assert.Equal(t, "optimizelegibility", css.CssRuleList[0].Style.Styles["text-rendering"].Value)
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "*")
+}
+
+func TestStarSelectorMulti(t *testing.T) {
+	css := Parse(`div .a {
+						font-size: 150%;
+					}
+				* { text-rendering: optimizelegibility; }`)
+
+	assert.Equal(t, "150%", css.CssRuleList[0].Style.Styles["font-size"].Value)
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
+	
+	assert.Equal(t, "optimizelegibility", css.CssRuleList[1].Style.Styles["text-rendering"].Value)
+	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "*")
+}

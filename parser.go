@@ -100,7 +100,7 @@ func Parse(csstext string) *CSSStyleSheet {
 
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
-				if "." == token.Value {
+				if token.Value != "{" {
 					context.State = STATE_SELECTOR
 					context.NowSelectorText += token.Value
 					break
