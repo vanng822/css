@@ -7,3 +7,11 @@ type CSSStyleDeclaration struct {
 	Value     string
 	Important int
 }
+
+func NewCSSStyleDeclaration(property, value string, important int) *CSSStyleDeclaration {
+	return &CSSStyleDeclaration{
+		Important: important,
+		Value:     value,
+		Property:  property,
+	}
+}
