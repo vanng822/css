@@ -10,8 +10,8 @@ type CSSStyleDeclaration struct {
 
 func NewCSSStyleDeclaration(property, value string, important int) *CSSStyleDeclaration {
 	return &CSSStyleDeclaration{
-		Important: important,
-		Value:     value,
 		Property:  property,
+		Value:     value,
+		Important: important,
 	}
 }
