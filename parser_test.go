@@ -90,3 +90,10 @@ func TestClass(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["color"].Value, "green")
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
 }
+
+func TestValueWhiteSpace(t *testing.T) {
+	css := Parse(".div { padding: 10px 0 0 10px}")
+
+	assert.Equal(t, "10px 0 0 10px", css.CssRuleList[0].Style.Styles["padding"].Value)
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
+}

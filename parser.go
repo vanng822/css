@@ -71,13 +71,13 @@ func Parse(csstext string) *CSSStyleSheet {
 
 			if context.State == STATE_NONE || context.State == STATE_SELECTOR {
 				context.State = STATE_SELECTOR
-				context.NowSelectorText += strings.Trim(token.Value, " ")
+				context.NowSelectorText += strings.TrimSpace(token.Value)
 				break
 			}
 
 			if context.State == STATE_DECLARE_BLOCK {
 				context.State = STATE_PROPERTY
-				context.NowProperty = strings.Trim(token.Value, " \t\n")
+				context.NowProperty = strings.TrimSpace(token.Value)
 				break
 			}
 
@@ -89,10 +89,14 @@ func Parse(csstext string) *CSSStyleSheet {
 				}
 				break
 			}
-
+		
+		case scanner.TokenDimension:
+			fallthrough
 		case scanner.TokenS:
 			if context.State == STATE_SELECTOR {
 				context.NowSelectorText += token.Value
+			} else if context.State == STATE_VALUE {
+				context.NowValue += token.Value
 			}
 
 		case scanner.TokenChar:
@@ -107,7 +111,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				if string('{') == token.Value {
 					context.State = STATE_DECLARE_BLOCK
 					context.CurrentRule = NewRule(context.NowRuleType)
-					context.CurrentRule.Style.SelectorText = strings.Trim(context.NowSelectorText, " ")
+					context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
 					break
 				} else {
 					context.NowSelectorText += token.Value
@@ -137,7 +141,7 @@ func Parse(csstext string) *CSSStyleSheet {
 
 			if context.State == STATE_VALUE {
 				if token.Value == ";" {
-					decl := NewCSSStyleDeclaration(context.NowProperty, strings.Trim(context.NowValue, " "), context.NowImportant)
+					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
 					context.CurrentRule.Style.Styles[context.NowProperty] = decl
 
 					context.NowProperty = ""
@@ -145,7 +149,7 @@ func Parse(csstext string) *CSSStyleSheet {
 					context.NowImportant = 0
 					context.State = STATE_DECLARE_BLOCK
 				} else if token.Value == "}" {
-					decl := NewCSSStyleDeclaration(context.NowProperty, strings.Trim(context.NowValue, " "), context.NowImportant)
+					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
 					context.CurrentRule.Style.Styles[context.NowProperty] = decl
 					css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
 					context.NowSelectorText = ""
@@ -162,17 +166,10 @@ func Parse(csstext string) *CSSStyleSheet {
 			}
 		case scanner.TokenPercentage:
 			fallthrough
-		case scanner.TokenDimension:
-			if context.State == STATE_VALUE {
-				context.NowValue += token.Value + " "
-			}
-			if context.State == STATE_SELECTOR {
-				context.NowSelectorText += token.Value
-			}
 		case scanner.TokenHash:
 			if context.State == STATE_NONE || context.State == STATE_SELECTOR {
 				context.State = STATE_SELECTOR
-				context.NowSelectorText += strings.Trim(token.Value, " ")
+				context.NowSelectorText += strings.TrimSpace(token.Value)
 				break
 			}
 
