@@ -89,7 +89,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				}
 				break
 			}
-		
+
 		case scanner.TokenDimension:
 			fallthrough
 		case scanner.TokenS:
@@ -159,7 +159,7 @@ func Parse(csstext string) *CSSStyleSheet {
 					context.NowRuleType = STYLE_RULE
 					context.State = STATE_NONE
 				} else if token.Value != "!" {
-						context.NowValue += token.Value
+					context.NowValue += token.Value
 				}
 				break
 
@@ -190,6 +190,8 @@ func Parse(csstext string) *CSSStyleSheet {
 			if context.State == STATE_VALUE {
 				context.NowValue += token.Value
 			}
+		default:
+			fmt.Printf("Unhandled, %s:'%s'\n", token.Type.String(), token.Value)
 		}
 	}
 	return css
