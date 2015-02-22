@@ -101,14 +101,14 @@ func Parse(csstext string) *CSSStyleSheet {
 
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
-				if string('.') == token.Value {
+				if "." == token.Value {
 					context.State = STATE_SELECTOR
 					context.NowSelectorText += token.Value
 					break
 				}
 			}
 			if context.State == STATE_SELECTOR {
-				if string('{') == token.Value {
+				if "{" == token.Value {
 					context.State = STATE_DECLARE_BLOCK
 					context.CurrentRule = NewRule(context.NowRuleType)
 					context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
@@ -148,7 +148,7 @@ func Parse(csstext string) *CSSStyleSheet {
 					context.NowValue = ""
 					context.NowImportant = 0
 					context.State = STATE_DECLARE_BLOCK
-				} else if token.Value == "}" {
+				} else if token.Value == "}" { // last property in a block can have optional ;
 					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
 					context.CurrentRule.Style.Styles[context.NowProperty] = decl
 					css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
