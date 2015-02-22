@@ -23,8 +23,7 @@ type ParserContext struct {
 	NowValue        string
 	NowImportant    int
 	NowRuleType     RuleType
-
-	CurrentRule *CSSRule
+	CurrentRule     *CSSRule
 }
 
 func Parse(csstext string) *CSSStyleSheet {
