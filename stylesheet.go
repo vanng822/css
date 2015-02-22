@@ -7,3 +7,7 @@ type CSSStyleSheet struct {
 	Media       string
 	CssRuleList []*CSSRule
 }
+
+func (ss *CSSStyleSheet) GetCSSRuleList() []*CSSRule {
+	return ss.CssRuleList
+}
