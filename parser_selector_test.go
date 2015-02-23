@@ -53,6 +53,24 @@ func TestStarSelectorMulti(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "*")
 }
 
+func TestMixedClassSelectors(t *testing.T) {
+	selectors := []string{".footer__content_wrapper--last",
+							"table[class=\"body\"] .footer__content td",
+							"table[class=\"body\"] td.footer__link_wrapper--first",
+							"table[class=\"body\"] td.footer__link_wrapper--last"}
+	
+	for _, selector := range selectors {
+		css := Parse(fmt.Sprintf(` %s {
+							    	border-collapse: separate;
+							    	padding: 10px 0 0
+							    	}`, selector))
+
+		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles["border-collapse"].Value)
+		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles["padding"].Value)
+		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
+	}
+}
+
 func TestGenericSelectors(t *testing.T) {
 	selectors := []string{".header + .content",
 							"p ~ ul",
