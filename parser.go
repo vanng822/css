@@ -191,6 +191,11 @@ func Parse(csstext string) *CSSStyleSheet {
 		case scanner.TokenSubstringMatch:
 			if context.State == STATE_VALUE {
 				context.NowValue += token.Value
+				break
+			}
+			if context.State == STATE_SELECTOR {
+				context.NowSelectorText += token.Value
+				break
 			}
 		default:
 			fmt.Printf("Unhandled, %s:'%s'\n", token.Type.String(), token.Value)

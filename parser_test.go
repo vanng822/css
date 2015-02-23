@@ -36,18 +36,6 @@ func TestMultipleDeclarations(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
 }
 
-func TestMultipleSelectors(t *testing.T) {
-	css := Parse(`div .a {
-						font-size: 150%;
-					}
-					p .b {
-						font-size: 250%;
-					}`)
-
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
-	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "p .b")
-
-}
 
 func TestValuePx(t *testing.T) {
 	css := Parse("div .a { font-size: 45px;}")
@@ -77,20 +65,6 @@ func TestValueString(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["text-align"].Value, "center")
 }
 
-func TestId(t *testing.T) {
-	css := Parse("#div { color: red;}")
-
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["color"].Value, "red")
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "#div")
-}
-
-func TestClass(t *testing.T) {
-	css := Parse(".div { color: green;}")
-
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["color"].Value, "green")
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
-}
-
 func TestValueWhiteSpace(t *testing.T) {
 	css := Parse(".div { padding: 10px 0 0 10px}")
 
@@ -98,25 +72,6 @@ func TestValueWhiteSpace(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
 }
 
-func TestStarSelector(t *testing.T) {
-	css := Parse("* { text-rendering: optimizelegibility; }")
-
-	assert.Equal(t, "optimizelegibility", css.CssRuleList[0].Style.Styles["text-rendering"].Value)
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "*")
-}
-
-func TestStarSelectorMulti(t *testing.T) {
-	css := Parse(`div .a {
-						font-size: 150%;
-					}
-				* { text-rendering: optimizelegibility; }`)
-
-	assert.Equal(t, "150%", css.CssRuleList[0].Style.Styles["font-size"].Value)
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
-
-	assert.Equal(t, "optimizelegibility", css.CssRuleList[1].Style.Styles["text-rendering"].Value)
-	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "*")
-}
 
 func TestValueMixed(t *testing.T) {
 	css := Parse(`td {
@@ -128,4 +83,3 @@ func TestValueMixed(t *testing.T) {
 	assert.Equal(t, "1px solid white", css.CssRuleList[0].Style.Styles["border-right"].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "td")
 }
-
