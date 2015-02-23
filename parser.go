@@ -17,23 +17,25 @@ const (
 )
 
 type ParserContext struct {
-	State           State
-	NowSelectorText string
-	NowProperty     string
-	NowValue        string
-	NowImportant    int
-	NowRuleType     RuleType
-	CurrentRule     *CSSRule
+	State            State
+	NowSelectorText  string
+	NowProperty      string
+	NowValue         string
+	NowImportant     int
+	NowRuleType      RuleType
+	CurrentRule      *CSSRule
+	CurrentMediaRule *CSSRule
 }
 
 func Parse(csstext string) *CSSStyleSheet {
 	context := &ParserContext{
-		State:           STATE_NONE,
-		NowSelectorText: "",
-		NowProperty:     "",
-		NowValue:        "",
-		NowImportant:    0,
-		NowRuleType:     STYLE_RULE,
+		State:            STATE_NONE,
+		NowSelectorText:  "",
+		NowProperty:      "",
+		NowValue:         "",
+		NowImportant:     0,
+		NowRuleType:      STYLE_RULE,
+		CurrentMediaRule: nil,
 	}
 
 	css := &CSSStyleSheet{}
@@ -79,7 +81,6 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowProperty = strings.TrimSpace(token.Value)
 				break
 			}
-			
 
 			if context.State == STATE_VALUE {
 				if token.Value == "important" {
@@ -103,6 +104,12 @@ func Parse(csstext string) *CSSStyleSheet {
 			}
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
+				if token.Value == "}" && context.CurrentMediaRule != nil {
+					// close media rule
+					css.CssRuleList = append(css.CssRuleList, context.CurrentMediaRule)
+					context.CurrentMediaRule = nil
+					break
+				}
 				if token.Value != "{" {
 					context.State = STATE_SELECTOR
 					context.NowSelectorText += token.Value
@@ -111,9 +118,21 @@ func Parse(csstext string) *CSSStyleSheet {
 			}
 			if context.State == STATE_SELECTOR {
 				if "{" == token.Value {
-					context.State = STATE_DECLARE_BLOCK
-					context.CurrentRule = NewRule(context.NowRuleType)
-					context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
+					if context.NowRuleType == MEDIA_RULE {
+						context.CurrentMediaRule = NewRule(context.NowRuleType)
+						context.CurrentMediaRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
+						// reset
+						context.NowSelectorText = ""
+						context.NowProperty = ""
+						context.NowValue = ""
+						context.NowImportant = 0
+						context.NowRuleType = STYLE_RULE
+						context.State = STATE_NONE
+					} else {
+						context.State = STATE_DECLARE_BLOCK
+						context.CurrentRule = NewRule(context.NowRuleType)
+						context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
+					}
 					break
 				} else {
 					context.NowSelectorText += token.Value
@@ -127,16 +146,20 @@ func Parse(csstext string) *CSSStyleSheet {
 				}
 				break
 			}
-
 			if context.State == STATE_DECLARE_BLOCK {
 				if token.Value == "}" {
-					css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
+					if context.CurrentMediaRule != nil {
+						context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
+					} else {
+						css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
+					}
 					context.NowSelectorText = ""
 					context.NowProperty = ""
 					context.NowValue = ""
 					context.NowImportant = 0
 					context.NowRuleType = STYLE_RULE
 					context.State = STATE_NONE
+
 				}
 				break
 			}
@@ -153,7 +176,11 @@ func Parse(csstext string) *CSSStyleSheet {
 				} else if token.Value == "}" { // last property in a block can have optional ;
 					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
 					context.CurrentRule.Style.Styles[context.NowProperty] = decl
-					css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
+					if context.CurrentMediaRule != nil {
+						context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
+					} else {
+						css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
+					}
 					context.NowSelectorText = ""
 					context.NowProperty = ""
 					context.NowValue = ""

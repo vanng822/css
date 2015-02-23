@@ -12,6 +12,7 @@ const (
 type CSSRule struct {
 	Type  RuleType
 	Style CSSStyleRule
+	Rules []*CSSRule
 }
 
 func NewRule(ruleType RuleType) *CSSRule {
@@ -19,6 +20,6 @@ func NewRule(ruleType RuleType) *CSSRule {
 		Type: ruleType,
 	}
 	r.Style.Styles = make(map[string]*CSSStyleDeclaration)
-
+	r.Rules = make([]*CSSRule, 0)
 	return r
 }
