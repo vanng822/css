@@ -79,3 +79,44 @@ func TestGenericSelectors(t *testing.T) {
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
+
+
+func TestFilterSelectors(t *testing.T) {
+	selectors := []string{"a:active",
+							"p::after",
+							"p::before",
+							"input:checked",
+							"input:disabled",
+							"p:empty",
+							"input:enabled",
+							"p:first-child",
+							"p::first-letter",
+							"p::first-line",
+							"p:first-of-type",
+							"input:focus",
+							"a:hover",
+							"input:in-range",
+							"input:invalid",
+							"p:lang(it)",
+							"p:last-child",
+							"p:last-of-type",
+							"a:link",
+							":not(p)",
+							"p:nth-child(2)",
+							"p:nth-last-child(2)",
+							":root",
+							"::selection",
+							"#news:target"}
+	
+	for _, selector := range selectors {
+		css := Parse(fmt.Sprintf(` %s {
+							    	border-collapse: separate;
+							    	padding: 10px 0 0
+							    	}`, selector))
+
+		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles["border-collapse"].Value)
+		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles["padding"].Value)
+		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
+	}
+}
+
