@@ -79,12 +79,13 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowProperty = strings.TrimSpace(token.Value)
 				break
 			}
+			
 
 			if context.State == STATE_VALUE {
 				if token.Value == "important" {
 					context.NowImportant = 1
 				} else {
-					context.NowValue = token.Value + " "
+					context.NowValue += token.Value
 				}
 				break
 			}
@@ -94,10 +95,12 @@ func Parse(csstext string) *CSSStyleSheet {
 		case scanner.TokenS:
 			if context.State == STATE_SELECTOR {
 				context.NowSelectorText += token.Value
-			} else if context.State == STATE_VALUE {
-				context.NowValue += token.Value
+				break
 			}
-
+			if context.State == STATE_VALUE {
+				context.NowValue += token.Value
+				break
+			}
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
 				if token.Value != "{" {

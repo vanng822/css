@@ -113,7 +113,19 @@ func TestStarSelectorMulti(t *testing.T) {
 
 	assert.Equal(t, "150%", css.CssRuleList[0].Style.Styles["font-size"].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
-	
+
 	assert.Equal(t, "optimizelegibility", css.CssRuleList[1].Style.Styles["text-rendering"].Value)
 	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "*")
 }
+
+func TestValueMixed(t *testing.T) {
+	css := Parse(`td {
+			padding: 0 12px 0 10px;
+    		border-right: 1px solid white
+		}`)
+
+	assert.Equal(t, "0 12px 0 10px", css.CssRuleList[0].Style.Styles["padding"].Value)
+	assert.Equal(t, "1px solid white", css.CssRuleList[0].Style.Styles["border-right"].Value)
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "td")
+}
+
