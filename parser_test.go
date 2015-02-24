@@ -83,3 +83,17 @@ func TestValueMixed(t *testing.T) {
 	assert.Equal(t, "1px solid white", css.CssRuleList[0].Style.Styles["border-right"].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "td")
 }
+
+func TestQuoteValue(t *testing.T) {
+	css := Parse(`blockquote {
+    				font-family: "Source Sans Pro", Arial, sans-serif;
+			    	font-size: 27px;
+			    	line-height: 35px;}`)
+
+	assert.Equal(t, "\"Source Sans Pro\", Arial, sans-serif", css.CssRuleList[0].Style.Styles["font-family"].Value)
+	assert.Equal(t, "27px", css.CssRuleList[0].Style.Styles["font-size"].Value)
+	assert.Equal(t, "35px", css.CssRuleList[0].Style.Styles["line-height"].Value)
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "blockquote")
+}
+
+

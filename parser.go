@@ -80,6 +80,11 @@ func Parse(csstext string) *CSSStyleSheet {
 		case scanner.TokenString:
 			if context.State == STATE_SELECTOR {
 				context.NowSelectorText += token.Value
+				break
+			}
+			if context.State == STATE_VALUE {
+				context.NowValue += token.Value
+				break
 			}
 		case scanner.TokenIdent:
 
