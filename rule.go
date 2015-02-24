@@ -9,6 +9,15 @@ const (
 	MEDIA_RULE
 )
 
+var ruleTypeNames = map[RuleType]string{
+	STYLE_RULE: "",
+	MEDIA_RULE: "@media",
+}
+
+func (rt RuleType) Text() string {
+	return ruleTypeNames[rt]
+}
+
 type CSSRule struct {
 	Type  RuleType
 	Style CSSStyleRule
