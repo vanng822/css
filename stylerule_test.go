@@ -12,5 +12,5 @@ func TestStyleRuleText(t *testing.T) {
 	sr.Styles["width"] = NewCSSStyleDeclaration("width", "10px", 0)
 	sr.Styles["height"] = NewCSSStyleDeclaration("height", "100px", 0)
 	
-	assert.Equal(t, sr.Text(), ".box {\nheight: 100px;\nwidth: 10px\n}\n")
+	assert.Equal(t, sr.Text(), ".box {\nheight: 100px;\nwidth: 10px\n}")
 }
