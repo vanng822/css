@@ -24,4 +24,19 @@ func TestParseBlockOneLine(t *testing.T) {
 	assert.Equal(t, "\"Source Sans Pro\", Arial, sans-serif", css["font-family"].Value)
 }
 
+func TestParseBlockBlankEnd(t *testing.T) {
+	css := ParseBlock("font-size: 27px; width: 10px")
+	
+	assert.Equal(t, len(css), 2)
+	assert.Equal(t, "27px", css["font-size"].Value)
+	assert.Equal(t, "10px", css["width"].Value)
+}
 
+func TestParseBlockInportant(t *testing.T) {
+	css := ParseBlock("font-size: 27px; width: 10px !important")
+	
+	assert.Equal(t, len(css), 2)
+	assert.Equal(t, "27px", css["font-size"].Value)
+	assert.Equal(t, "10px", css["width"].Value)
+	assert.Equal(t, 1, css["width"].Important)
+}

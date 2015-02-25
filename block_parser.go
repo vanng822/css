@@ -25,10 +25,10 @@ import (
 */
 
 type blockParserContext struct {
-	State            State
-	NowProperty      string
-	NowValue         string
-	NowImportant     int
+	State        State
+	NowProperty  string
+	NowValue     string
+	NowImportant int
 }
 
 func ParseBlock(csstext string) map[string]*CSSStyleDeclaration {
@@ -49,10 +49,10 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 	decls := make(map[string]*CSSStyleDeclaration)
 
 	context := &blockParserContext{
-		State:           STATE_NONE,
-		NowProperty:     "",
-		NowValue:        "",
-		NowImportant:    0,
+		State:        STATE_NONE,
+		NowProperty:  "",
+		NowValue:     "",
+		NowImportant: 0,
 	}
 
 	for {
@@ -60,7 +60,17 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 
 		fmt.Printf("BLOCK(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
 
-		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
+		if token.Type == scanner.TokenError {
+			break
+		}
+
+		if token.Type == scanner.TokenEOF {
+			if context.State == STATE_VALUE {
+				// we are ending without ; or }
+				// this can happen when we parse only css declaration
+				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
+				decls[context.NowProperty] = decl
+			}
 			break
 		}
 
