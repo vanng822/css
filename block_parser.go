@@ -49,7 +49,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 	decls := make(map[string]*CSSStyleDeclaration)
 
 	context := &blockParserContext{
-		State:           STATE_DECLARE_BLOCK,
+		State:           STATE_NONE,
 		NowProperty:     "",
 		NowValue:        "",
 		NowImportant:    0,
@@ -71,7 +71,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 				context.NowValue += token.Value
 			}
 		case scanner.TokenIdent:
-			if context.State == STATE_DECLARE_BLOCK || context.State == STATE_NONE {
+			if context.State == STATE_NONE {
 				context.State = STATE_PROPERTY
 				context.NowProperty = strings.TrimSpace(token.Value)
 				break
