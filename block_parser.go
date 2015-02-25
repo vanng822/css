@@ -92,6 +92,11 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 				context.NowValue += token.Value
 			}
 		case scanner.TokenChar:
+			if context.State == STATE_NONE {
+				if token.Value == "{" {
+					break	
+				}
+			}
 			if context.State == STATE_PROPERTY {
 				if token.Value == ":" {
 					context.State = STATE_VALUE
