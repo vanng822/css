@@ -63,7 +63,7 @@ func Parse(csstext string) *CSSStyleSheet {
 	for {
 		token := s.Next()
 
-		//fmt.Printf("%s:'%s'\n", token.Type.String(), token.Value)
+		fmt.Printf("Parse(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
 
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
 			break
@@ -82,10 +82,6 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowSelectorText += token.Value
 				break
 			}
-			if context.State == STATE_VALUE {
-				context.NowValue += token.Value
-				break
-			}
 		case scanner.TokenIdent:
 
 			if context.State == STATE_NONE || context.State == STATE_SELECTOR {
@@ -93,22 +89,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowSelectorText += strings.TrimSpace(token.Value)
 				break
 			}
-
-			if context.State == STATE_DECLARE_BLOCK {
-				context.State = STATE_PROPERTY
-				context.NowProperty = strings.TrimSpace(token.Value)
-				break
-			}
-
-			if context.State == STATE_VALUE {
-				if token.Value == "important" {
-					context.NowImportant = 1
-				} else {
-					context.NowValue += token.Value
-				}
-				break
-			}
-
+			
 		case scanner.TokenDimension:
 			fallthrough
 		case scanner.TokenS:
@@ -116,10 +97,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowSelectorText += token.Value
 				break
 			}
-			if context.State == STATE_VALUE {
-				context.NowValue += token.Value
-				break
-			}
+			
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
 				if token.Value == "}" && context.CurrentMediaRule != nil {
@@ -146,70 +124,29 @@ func Parse(csstext string) *CSSStyleSheet {
 						context.NowImportant = 0
 						context.NowRuleType = STYLE_RULE
 						context.State = STATE_NONE
+						break
 					} else {
-						context.State = STATE_DECLARE_BLOCK
 						context.CurrentRule = NewRule(context.NowRuleType)
 						context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
+						context.CurrentRule.Style.Styles = parseBlock(s)
+						if context.CurrentMediaRule != nil {
+							context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
+						} else {
+							css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
+						}
+						context.CurrentRule = nil
+						context.NowSelectorText = ""
+						context.NowProperty = ""
+						context.NowValue = ""
+						context.NowImportant = 0
+						context.NowRuleType = STYLE_RULE
+						context.State = STATE_NONE
+						break
 					}
-					break
 				} else {
 					context.NowSelectorText += token.Value
 				}
 				break
-			}
-
-			if context.State == STATE_PROPERTY {
-				if token.Value == ":" {
-					context.State = STATE_VALUE
-				}
-				break
-			}
-			if context.State == STATE_DECLARE_BLOCK {
-				if token.Value == "}" {
-					if context.CurrentMediaRule != nil {
-						context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
-					} else {
-						css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
-					}
-					context.NowSelectorText = ""
-					context.NowProperty = ""
-					context.NowValue = ""
-					context.NowImportant = 0
-					context.NowRuleType = STYLE_RULE
-					context.State = STATE_NONE
-
-				}
-				break
-			}
-
-			if context.State == STATE_VALUE {
-				if token.Value == ";" {
-					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-					context.CurrentRule.Style.Styles[context.NowProperty] = decl
-
-					context.NowProperty = ""
-					context.NowValue = ""
-					context.NowImportant = 0
-					context.State = STATE_DECLARE_BLOCK
-				} else if token.Value == "}" { // last property in a block can have optional ;
-					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-					context.CurrentRule.Style.Styles[context.NowProperty] = decl
-					if context.CurrentMediaRule != nil {
-						context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
-					} else {
-						css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
-					}
-					context.NowSelectorText = ""
-					context.NowProperty = ""
-					context.NowValue = ""
-					context.NowImportant = 0
-					context.NowRuleType = STYLE_RULE
-					context.State = STATE_NONE
-				} else if token.Value != "!" {
-					context.NowValue += token.Value
-				}
-				break
-
 			}
 		case scanner.TokenPercentage:
 			fallthrough
@@ -234,10 +171,6 @@ func Parse(csstext string) *CSSStyleSheet {
 		case scanner.TokenSuffixMatch:
 			fallthrough
 		case scanner.TokenSubstringMatch:
-			if context.State == STATE_VALUE {
-				context.NowValue += token.Value
-				break
-			}
 			if context.State == STATE_SELECTOR {
 				context.NowSelectorText += token.Value
 				break
