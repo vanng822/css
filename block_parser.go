@@ -79,9 +79,12 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 			if context.State == STATE_PROPERTY {
 				if token.Value == ":" {
 					context.State = STATE_VALUE
-					break
 				}
+				// CHAR and STATE_PROPERTY but not : then weird
+				// break to ignore it
+				break
 			}
+			// should be no state or value
 			if token.Value == ";" {
 				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
 				decls[context.NowProperty] = decl
