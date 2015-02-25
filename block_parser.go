@@ -93,8 +93,11 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 				context.NowImportant = 0
 				context.State = STATE_NONE
 			} else if token.Value == "}" { // last property in a block can have optional ;
-				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-				decls[context.NowProperty] = decl
+				if context.State == STATE_VALUE {
+					// only valid if state is still VALUE, could be ;}
+					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
+					decls[context.NowProperty] = decl
+				}
 				// we are done
 				return decls
 			} else if token.Value != "!" {
