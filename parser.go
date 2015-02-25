@@ -29,7 +29,6 @@ type State int
 const (
 	STATE_NONE State = iota
 	STATE_SELECTOR
-	STATE_DECLARE_BLOCK
 	STATE_PROPERTY
 	STATE_VALUE
 )
