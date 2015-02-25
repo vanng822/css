@@ -24,6 +24,13 @@ import (
 	unused      : block | ATKEYWORD S* | ';' S* | CDO S* | CDC S*;
 */
 
+type blockParserContext struct {
+	State            State
+	NowProperty      string
+	NowValue         string
+	NowImportant     int
+}
+
 func ParseBlock(csstext string) map[string]*CSSStyleDeclaration {
 	s := scanner.New(csstext)
 	return parseBlock(s)
@@ -41,9 +48,8 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 	*/
 	decls := make(map[string]*CSSStyleDeclaration)
 
-	context := &ParserContext{
+	context := &blockParserContext{
 		State:           STATE_DECLARE_BLOCK,
-		NowSelectorText: "",
 		NowProperty:     "",
 		NowValue:        "",
 		NowImportant:    0,

@@ -34,24 +34,18 @@ const (
 	STATE_VALUE
 )
 
-type ParserContext struct {
+type parserContext struct {
 	State            State
 	NowSelectorText  string
-	NowProperty      string
-	NowValue         string
-	NowImportant     int
 	NowRuleType      RuleType
 	CurrentRule      *CSSRule
 	CurrentMediaRule *CSSRule
 }
 
 func Parse(csstext string) *CSSStyleSheet {
-	context := &ParserContext{
+	context := &parserContext{
 		State:            STATE_NONE,
 		NowSelectorText:  "",
-		NowProperty:      "",
-		NowValue:         "",
-		NowImportant:     0,
 		NowRuleType:      STYLE_RULE,
 		CurrentMediaRule: nil,
 	}
@@ -119,9 +113,6 @@ func Parse(csstext string) *CSSStyleSheet {
 						context.CurrentMediaRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
 						// reset
 						context.NowSelectorText = ""
-						context.NowProperty = ""
-						context.NowValue = ""
-						context.NowImportant = 0
 						context.NowRuleType = STYLE_RULE
 						context.State = STATE_NONE
 						break
@@ -136,9 +127,6 @@ func Parse(csstext string) *CSSStyleSheet {
 						}
 						context.CurrentRule = nil
 						context.NowSelectorText = ""
-						context.NowProperty = ""
-						context.NowValue = ""
-						context.NowImportant = 0
 						context.NowRuleType = STYLE_RULE
 						context.State = STATE_NONE
 						break
