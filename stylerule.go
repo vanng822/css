@@ -13,15 +13,12 @@ type CSSStyleRule struct {
 
 func (sr *CSSStyleRule) Text() string {
 	decls := make([]string, 0, len(sr.Styles))
-	keys := make([]string, 0, len(sr.Styles))
-	for key, _ := range sr.Styles {
-		keys = append(keys, key)
+	
+	for _, s := range sr.Styles {
+		decls = append(decls, s.Text())
 	}
-	sort.Strings(keys)
-
-	for _, key := range keys {
-		decls = append(decls, sr.Styles[key].Text())
-	}
+	
+	sort.Strings(decls)
 
 	return fmt.Sprintf("%s {\n%s\n}", sr.SelectorText, strings.Join(decls, ";\n"))
 }
