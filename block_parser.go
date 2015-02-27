@@ -31,6 +31,8 @@ type blockParserContext struct {
 	NowImportant int
 }
 
+// ParseBlock take a string of a css block,
+// parses it and returns a map of css style declarations.
 func ParseBlock(csstext string) map[string]*CSSStyleDeclaration {
 	s := scanner.New(csstext)
 	return parseBlock(s)

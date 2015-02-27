@@ -41,6 +41,9 @@ type parserContext struct {
 	CurrentMediaRule *CSSRule
 }
 
+// Parse takes a string of valid css rules, stylesheet,
+// and parses it. Be aware this function has poor error handling
+// so you should have valid syntax in your css
 func Parse(csstext string) *CSSStyleSheet {
 	context := &parserContext{
 		State:            STATE_NONE,
