@@ -59,7 +59,7 @@ func Parse(csstext string) *CSSStyleSheet {
 	for {
 		token := s.Next()
 
-		fmt.Printf("Parse(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
+		//fmt.Printf("Parse(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
 
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
 			break

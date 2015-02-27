@@ -60,7 +60,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 	for {
 		token := s.Next()
 
-		fmt.Printf("BLOCK(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
+		//fmt.Printf("BLOCK(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
 
 		if token.Type == scanner.TokenError {
 			break
