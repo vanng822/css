@@ -55,10 +55,10 @@ func TestStarSelectorMulti(t *testing.T) {
 
 func TestMixedClassSelectors(t *testing.T) {
 	selectors := []string{".footer__content_wrapper--last",
-							"table[class=\"body\"] .footer__content td",
-							"table[class=\"body\"] td.footer__link_wrapper--first",
-							"table[class=\"body\"] td.footer__link_wrapper--last"}
-	
+		"table[class=\"body\"] .footer__content td",
+		"table[class=\"body\"] td.footer__link_wrapper--first",
+		"table[class=\"body\"] td.footer__link_wrapper--last"}
+
 	for _, selector := range selectors {
 		css := Parse(fmt.Sprintf(` %s {
 							    	border-collapse: separate;
@@ -72,20 +72,24 @@ func TestMixedClassSelectors(t *testing.T) {
 }
 
 func TestGenericSelectors(t *testing.T) {
-	selectors := []string{".header + .content",
-							"p ~ ul",
-							"div > p",
-							"div > p",
-							"div p",
-							"div, p",
-							"[target]",
-							"[target=_blank]",
-							"[title~=flower]",
-							"[lang|=en]",
-							"a[href^=\"https\"]",
-							"a[href$=\".pdf\"]",
-							"a[href*=\"css\"]"}
-	
+	selectors := []string{
+		"p ~ ul",
+		"div > p",
+		"div > p",
+		"div p",
+		"div, p",
+		"[target]",
+		"[target=_blank]",
+		"[title~=flower]",
+		"[lang|=en]",
+		"a[href^=\"https\"]",
+		"a[href$=\".pdf\"]",
+		"a[href*=\"css\"]",
+		".header + .content",
+		"#firstname",
+		"table[class=\"body\"] .footer__content td",
+		"table[class=\"body\"] td.footer__link_wrapper--first"}
+
 	for _, selector := range selectors {
 		css := Parse(fmt.Sprintf(` %s {
 							    	border-collapse: separate;
@@ -97,35 +101,42 @@ func TestGenericSelectors(t *testing.T) {
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
-
 
 func TestFilterSelectors(t *testing.T) {
-	selectors := []string{"a:active",
-							"p::after",
-							"p::before",
-							"input:checked",
-							"input:disabled",
-							"p:empty",
-							"input:enabled",
-							"p:first-child",
-							"p::first-letter",
-							"p::first-line",
-							"p:first-of-type",
-							"input:focus",
-							"a:hover",
-							"input:in-range",
-							"input:invalid",
-							"p:lang(it)",
-							"p:last-child",
-							"p:last-of-type",
-							"a:link",
-							":not(p)",
-							"p:nth-child(2)",
-							"p:nth-last-child(2)",
-							":root",
-							"::selection",
-							"#news:target"}
-	
+	selectors := []string{
+		"a:active",
+		"p::after",
+		"p::before",
+		"input:checked",
+		"input:disabled",
+		"input:in-range",
+		"input:invalid",
+		"input:optional",
+		"input:read-only",
+		"input:enabled",
+		"p:empty",
+		"p:first-child",
+		"p::first-letter",
+		"p::first-line",
+		"p:first-of-type",
+		"input:focus",
+		"a:hover",
+		"p:lang(it)",
+		"p:last-child",
+		"p:last-of-type",
+		"a:link",
+		":not(p)",
+		"p:nth-child(2)",
+		"p:nth-last-child(2)",
+		"p:only-of-type",
+		"p:only-child",
+		"p:nth-last-of-type(2)",
+		"div:not(:nth-child(1))",
+		"div:not(:not(:first-child))",
+		":root",
+		"::selection",
+		"#news:target"}
+
 	for _, selector := range selectors {
 		css := Parse(fmt.Sprintf(` %s {
 							    	border-collapse: separate;
@@ -137,4 +148,3 @@ func TestFilterSelectors(t *testing.T) {
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
-
