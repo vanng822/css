@@ -161,6 +161,7 @@ func TestFontFace(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\"")
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["src"].Value, "url(\"https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf\")")
 	assert.Equal(t, css.CssRuleList[1].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\", serif")
+	assert.Equal(t, css.CssRuleList[0].Type, FONT_FACE_RULE)
 }
 
 func TestPage(t *testing.T) {
@@ -170,4 +171,5 @@ func TestPage(t *testing.T) {
 
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ":first")
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["margin"].Value, "2in 3in")
+	assert.Equal(t, css.CssRuleList[0].Type, PAGE_RULE)
 }
