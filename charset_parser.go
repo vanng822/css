@@ -9,7 +9,7 @@ import (
 func newCharsetRule(statement string) *CSSRule {
 	statement = strings.TrimSpace(statement)
 	if statement != "" {
-		rule := NewRule(IMPORT_RULE)
+		rule := NewRule(CHARSET_RULE)
 		rule.Style.SelectorText = statement
 		return rule
 	}
