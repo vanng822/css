@@ -36,7 +36,6 @@ func TestMultipleDeclarations(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
 }
 
-
 func TestValuePx(t *testing.T) {
 	css := Parse("div .a { font-size: 45px;}")
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["font-size"].Value, "45px")
@@ -72,7 +71,6 @@ func TestValueWhiteSpace(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
 }
 
-
 func TestValueMixed(t *testing.T) {
 	css := Parse(`td {
 			padding: 0 12px 0 10px;
@@ -96,4 +94,54 @@ func TestQuoteValue(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "blockquote")
 }
 
-
+func TestNotSupportedAtRule(t *testing.T) {
+	rules := []string{
+		`@keyframes mymove {
+			    0%   {top: 0px;}
+			    25%  {top: 200px;}
+			    50%  {top: 100px;}
+			    75%  {top: 200px;}
+			    100% {top: 0px;}
+			}`,
+		`@-webkit-keyframes mymove {
+			    0%   {top: 0px;}
+			    25%  {top: 200px;}
+			    50%  {top: 100px;}
+			    75%  {top: 200px;}
+			    100% {top: 0px;}
+			} `,
+		`@font-face {
+			    font-family: myFirstFont;
+			    src: url(sansation_light.woff);
+			}`,
+		`@page :first {
+				margin: 2in 3in;
+			}`,
+		`@import url("fineprint.css") print;
+			@import url("bluish.css") projection, tv;
+			@import 'custom.css';
+			@import url("chrome://communicator/skin/");
+			@import "common.css" screen, projection;
+			@import url('landscape.css') screen and (orientation:landscape)`,
+		`@charset "UTF-8"; `,
+		`@counter-style winners-list {
+			  system: fixed;
+			  symbols: url(gold-medal.svg) url(silver-medal.svg) url(bronze-medal.svg);
+			  suffix: " ";
+			}`,
+		`@namespace url(http://www.w3.org/1999/xhtml);`,
+		`@document url(http://www.w3.org/),
+               url-prefix(http://www.w3.org/Style/),
+               domain(mozilla.org),
+               regexp("https:.*")
+			{
+			
+			  body { color: purple; background: yellow; }
+			}`,
+	}
+	for _, rule := range rules {
+		assert.Panics(t, func() {
+			Parse(rule)
+		})
+	}
+}

@@ -71,6 +71,8 @@ func Parse(csstext string) *CSSStyleSheet {
 			switch token.Value {
 			case "@media":
 				context.NowRuleType = MEDIA_RULE
+			default:
+				panic(fmt.Sprintf("At rule '%s' is not supported", token.Value))
 			}
 
 		case scanner.TokenString:
@@ -85,7 +87,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowSelectorText += strings.TrimSpace(token.Value)
 				break
 			}
-			
+
 		case scanner.TokenDimension:
 			fallthrough
 		case scanner.TokenS:
@@ -93,7 +95,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowSelectorText += token.Value
 				break
 			}
-			
+
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
 				if token.Value == "}" && context.CurrentMediaRule != nil {
