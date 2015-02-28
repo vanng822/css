@@ -110,20 +110,6 @@ func TestNotSupportedAtRule(t *testing.T) {
 			    75%  {top: 200px;}
 			    100% {top: 0px;}
 			} `,
-		`@font-face {
-			    font-family: myFirstFont;
-			    src: url(sansation_light.woff);
-			}`,
-		`@page :first {
-				margin: 2in 3in;
-			}`,
-		`@import url("fineprint.css") print;
-			@import url("bluish.css") projection, tv;
-			@import 'custom.css';
-			@import url("chrome://communicator/skin/");
-			@import "common.css" screen, projection;
-			@import url('landscape.css') screen and (orientation:landscape)`,
-		`@charset "UTF-8"; `,
 		`@counter-style winners-list {
 			  system: fixed;
 			  symbols: url(gold-medal.svg) url(silver-medal.svg) url(bronze-medal.svg);

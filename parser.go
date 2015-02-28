@@ -41,6 +41,13 @@ type parserContext struct {
 	CurrentMediaRule *CSSRule
 }
 
+func resetContextStyleRule(context *parserContext) {
+	context.CurrentRule = nil
+	context.NowSelectorText = ""
+	context.NowRuleType = STYLE_RULE
+	context.State = STATE_NONE
+}
+
 // Parse takes a string of valid css rules, stylesheet,
 // and parses it. Be aware this function has poor error handling
 // so you should have valid syntax in your css
@@ -71,6 +78,29 @@ func Parse(csstext string) *CSSStyleSheet {
 			switch token.Value {
 			case "@media":
 				context.NowRuleType = MEDIA_RULE
+			case "@font-face":
+				// Parse as normal rule, would be nice to parse according to syntax
+				// https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face
+				context.NowRuleType = FONT_FACE_RULE
+			case "@import":
+				// No validation
+				// https://developer.mozilla.org/en-US/docs/Web/CSS/@import
+				rule := parseImport(s)
+				if rule != nil {
+					css.CssRuleList = append(css.CssRuleList, rule)
+				}
+				resetContextStyleRule(context)
+			case "@charset":
+				// No validation
+				// https://developer.mozilla.org/en-US/docs/Web/CSS/@charset
+				rule := parseCharset(s)
+				if rule != nil {
+					css.CssRuleList = append(css.CssRuleList, rule)
+				}
+				resetContextStyleRule(context)
+
+			case "@page":
+				context.NowRuleType = PAGE_RULE
 			default:
 				panic(fmt.Sprintf("At rule '%s' is not supported", token.Value))
 			}
@@ -115,10 +145,7 @@ func Parse(csstext string) *CSSStyleSheet {
 					if context.NowRuleType == MEDIA_RULE {
 						context.CurrentMediaRule = NewRule(context.NowRuleType)
 						context.CurrentMediaRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
-						// reset
-						context.NowSelectorText = ""
-						context.NowRuleType = STYLE_RULE
-						context.State = STATE_NONE
+						resetContextStyleRule(context)
 						break
 					} else {
 						context.CurrentRule = NewRule(context.NowRuleType)
@@ -129,10 +156,7 @@ func Parse(csstext string) *CSSStyleSheet {
 						} else {
 							css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
 						}
-						context.CurrentRule = nil
-						context.NowSelectorText = ""
-						context.NowRuleType = STYLE_RULE
-						context.State = STATE_NONE
+						resetContextStyleRule(context)
 						break
 					}
 				} else {
@@ -180,7 +204,7 @@ func Parse(csstext string) *CSSStyleSheet {
 		case scanner.TokenComment:
 			fallthrough
 		default:
-			fmt.Printf("Unhandled, %s:'%s'\n", token.Type.String(), token.Value)
+			fmt.Printf("Parse(%d) Unhandled, %s:'%s'\n", context.State, token.Type.String(), token.Value)
 		}
 	}
 	return css

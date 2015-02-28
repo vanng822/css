@@ -148,3 +148,26 @@ func TestFilterSelectors(t *testing.T) {
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
+
+func TestFontFace(t *testing.T) {
+	css := Parse(`@font-face {
+				      font-family: "Bitstream Vera Serif Bold";
+				      src: url("https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf");
+				    }
+				    
+				    body { font-family: "Bitstream Vera Serif Bold", serif }`)
+
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\"")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["src"].Value, "url(\"https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf\")")
+	assert.Equal(t, css.CssRuleList[1].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\", serif")
+}
+
+func TestPage(t *testing.T) {
+	css := Parse(`@page :first {
+					margin: 2in 3in;
+				}`)
+
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ":first")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["margin"].Value, "2in 3in")
+}

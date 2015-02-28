@@ -6,7 +6,12 @@ type RuleType int
 
 const (
 	STYLE_RULE RuleType = iota
+	CHARSET_RULE
+	IMPORT_RULE
 	MEDIA_RULE
+	FONT_FACE_RULE
+	PAGE_RULE
+	
 )
 
 var ruleTypeNames = map[RuleType]string{
