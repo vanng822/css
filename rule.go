@@ -17,6 +17,10 @@ const (
 var ruleTypeNames = map[RuleType]string{
 	STYLE_RULE: "",
 	MEDIA_RULE: "@media",
+	CHARSET_RULE: "@charset",
+	IMPORT_RULE: "@import",
+	FONT_FACE_RULE: "@font-face",
+	PAGE_RULE: "@page",
 }
 
 func (rt RuleType) Text() string {
