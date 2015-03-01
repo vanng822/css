@@ -1,6 +1,7 @@
 package css
 
 import (
+	"github.com/gorilla/css/scanner"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -19,3 +20,8 @@ func TestCharsetSingleQ(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Type, CHARSET_RULE)
 }
 
+func TestCharsetIgnore(t *testing.T) {
+	css := parseCharset(scanner.New(` 'iso-8859-15'`))
+
+	assert.Nil(t, css)
+}
