@@ -102,6 +102,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				// https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face
 				context.NowRuleType = FONT_FACE_RULE
 				parseRule(context, s, css)
+				resetContextStyleRule(context)
 			case "@import":
 				// No validation
 				// https://developer.mozilla.org/en-US/docs/Web/CSS/@import
@@ -122,6 +123,7 @@ func Parse(csstext string) *CSSStyleSheet {
 			case "@page":
 				context.NowRuleType = PAGE_RULE
 				parseRule(context, s, css)
+				resetContextStyleRule(context)
 			default:
 				panic(fmt.Sprintf("At rule '%s' is not supported", token.Value))
 			}
