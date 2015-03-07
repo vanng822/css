@@ -2,6 +2,9 @@
 
 Package css is for parsing css stylesheet.
 
+# Document
+
+[![GoDoc](https://godoc.org/github.com/vanng822/css?status.svg)](https://godoc.org/github.com/vanng822/css)
 
 # example
 
