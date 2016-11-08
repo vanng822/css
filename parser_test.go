@@ -1,8 +1,9 @@
 package css
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestWithoutImpotant(t *testing.T) {
@@ -94,6 +95,20 @@ func TestQuoteValue(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "blockquote")
 }
 
+func TestDashClassname(t *testing.T) {
+	css := Parse(`.content {
+    				padding: 0px;
+						}
+						.content-wrap {
+					  padding: 2px;
+						}`)
+
+	assert.Equal(t, ".content", css.CssRuleList[0].Style.SelectorText)
+	assert.Equal(t, ".content-wrap", css.CssRuleList[1].Style.SelectorText)
+	assert.Equal(t, "0px", css.CssRuleList[0].Style.Styles["padding"].Value)
+	assert.Equal(t, "2px", css.CssRuleList[1].Style.Styles["padding"].Value)
+}
+
 func TestNotSupportedAtRule(t *testing.T) {
 	rules := []string{
 		`@keyframes mymove {
@@ -121,7 +136,7 @@ func TestNotSupportedAtRule(t *testing.T) {
                domain(mozilla.org),
                regexp("https:.*")
 			{
-			
+
 			  body { color: purple; background: yellow; }
 			}`,
 	}
