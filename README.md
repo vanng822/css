@@ -13,7 +13,7 @@ Package css is for parsing css stylesheet.
 		"fmt"
 	)
 	func main() {
-		csstext = "td {width: 100px; height: 100px;}"
+		csstext := "td {width: 100px; height: 100px;}"
 		ss := css.Parse(csstext)
 		rules := ss.GetCSSRuleList()
 		for _, rule := range rules {
