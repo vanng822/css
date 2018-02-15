@@ -140,9 +140,9 @@ func TestNotSupportedAtRule(t *testing.T) {
 			  body { color: purple; background: yellow; }
 			}`,
 	}
+	css := &CSSStyleSheet{}
+	css.CssRuleList = make([]*CSSRule, 0)
 	for _, rule := range rules {
-		assert.Panics(t, func() {
-			Parse(rule)
-		})
+		assert.Equal(t, css, Parse(rule))
 	}
 }

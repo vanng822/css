@@ -2,8 +2,10 @@ package css
 
 import (
 	"fmt"
-	"github.com/gorilla/css/scanner"
+	"log"
 	"strings"
+
+	"github.com/gorilla/css/scanner"
 )
 
 /*
@@ -78,8 +80,6 @@ func Parse(csstext string) *CSSStyleSheet {
 	for {
 		token := s.Next()
 
-		//fmt.Printf("Parse(%d): %s:'%s'\n", context.State, token.Type.String(), token.Value)
-
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
 			break
 		}
@@ -125,7 +125,9 @@ func Parse(csstext string) *CSSStyleSheet {
 				parseRule(context, s, css)
 				resetContextStyleRule(context)
 			default:
-				panic(fmt.Sprintf("At rule '%s' is not supported", token.Value))
+				log.Println(fmt.Printf("Skip unsupported atrule: %s", token.Value))
+				skipRules(s)
+				resetContextStyleRule(context)
 			}
 		default:
 			if context.State == STATE_NONE {
