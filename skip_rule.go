@@ -9,12 +9,8 @@ func skipRules(s *scanner.Scanner) {
 		started bool
 	)
 	for {
-		if started {
-			if open == close {
-				return
-			} else if close > open {
-				return
-			}
+		if started && close >= open {
+			return
 		}
 		token := s.Next()
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
