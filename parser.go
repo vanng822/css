@@ -36,11 +36,11 @@ const (
 )
 
 type parserContext struct {
-	State            State
-	NowSelectorText  string
-	NowRuleType      RuleType
-	CurrentRule      *CSSRule
-	CurrentMediaRule *CSSRule
+	State             State
+	NowSelectorText   string
+	NowRuleType       RuleType
+	CurrentRule       *CSSRule
+	CurrentNestedRule *CSSRule
 }
 
 func resetContextStyleRule(context *parserContext) {
@@ -55,8 +55,8 @@ func parseRule(context *parserContext, s *scanner.Scanner, css *CSSStyleSheet) {
 	context.NowSelectorText += parseSelector(s)
 	context.CurrentRule.Style.SelectorText = strings.TrimSpace(context.NowSelectorText)
 	context.CurrentRule.Style.Styles = parseBlock(s)
-	if context.CurrentMediaRule != nil {
-		context.CurrentMediaRule.Rules = append(context.CurrentMediaRule.Rules, context.CurrentRule)
+	if context.CurrentNestedRule != nil {
+		context.CurrentNestedRule.Rules = append(context.CurrentNestedRule.Rules, context.CurrentRule)
 	} else {
 		css.CssRuleList = append(css.CssRuleList, context.CurrentRule)
 	}
@@ -67,10 +67,10 @@ func parseRule(context *parserContext, s *scanner.Scanner, css *CSSStyleSheet) {
 // so you should have valid syntax in your css
 func Parse(csstext string) *CSSStyleSheet {
 	context := &parserContext{
-		State:            STATE_NONE,
-		NowSelectorText:  "",
-		NowRuleType:      STYLE_RULE,
-		CurrentMediaRule: nil,
+		State:             STATE_NONE,
+		NowSelectorText:   "",
+		NowRuleType:       STYLE_RULE,
+		CurrentNestedRule: nil,
 	}
 
 	css := &CSSStyleSheet{}
@@ -124,6 +124,14 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowRuleType = PAGE_RULE
 				parseRule(context, s, css)
 				resetContextStyleRule(context)
+			case "@keyframes":
+				context.NowRuleType = KEYFRAMES_RULE
+			case "@-webkit-keyframes":
+				context.NowRuleType = WEBKIT_KEYFRAMES_RULE
+			case "@counter-style":
+				context.NowRuleType = COUNTER_STYLE_RULE
+				parseRule(context, s, css)
+				resetContextStyleRule(context)
 			default:
 				log.Println(fmt.Printf("Skip unsupported atrule: %s", token.Value))
 				skipRules(s)
@@ -131,17 +139,17 @@ func Parse(csstext string) *CSSStyleSheet {
 			}
 		default:
 			if context.State == STATE_NONE {
-				if token.Value == "}" && context.CurrentMediaRule != nil {
+				if token.Value == "}" && context.CurrentNestedRule != nil {
 					// close media rule
-					css.CssRuleList = append(css.CssRuleList, context.CurrentMediaRule)
-					context.CurrentMediaRule = nil
+					css.CssRuleList = append(css.CssRuleList, context.CurrentNestedRule)
+					context.CurrentNestedRule = nil
 					break
 				}
 			}
 
-			if context.NowRuleType == MEDIA_RULE {
-				context.CurrentMediaRule = NewRule(context.NowRuleType)
-				context.CurrentMediaRule.Style.SelectorText = strings.TrimSpace(token.Value + parseSelector(s))
+			if context.NowRuleType == MEDIA_RULE || context.NowRuleType == KEYFRAMES_RULE || context.NowRuleType == WEBKIT_KEYFRAMES_RULE {
+				context.CurrentNestedRule = NewRule(context.NowRuleType)
+				context.CurrentNestedRule.Style.SelectorText = strings.TrimSpace(token.Value + parseSelector(s))
 				resetContextStyleRule(context)
 				break
 			} else {

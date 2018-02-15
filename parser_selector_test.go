@@ -2,8 +2,9 @@ package css
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMultipleSelectors(t *testing.T) {
@@ -154,7 +155,7 @@ func TestFontFace(t *testing.T) {
 				      font-family: "Bitstream Vera Serif Bold";
 				      src: url("https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf");
 				    }
-				    
+
 				    body { font-family: "Bitstream Vera Serif Bold", serif }`)
 
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "")
@@ -172,4 +173,18 @@ func TestPage(t *testing.T) {
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ":first")
 	assert.Equal(t, css.CssRuleList[0].Style.Styles["margin"].Value, "2in 3in")
 	assert.Equal(t, css.CssRuleList[0].Type, PAGE_RULE)
+}
+
+func TestCounterStyle(t *testing.T) {
+	css := Parse(`@counter-style winners-list {
+				system: cyclic;
+				symbols: "\1F44D";
+				suffix: " ";
+	  }`)
+
+	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "winners-list")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["system"].Value, "cyclic")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["symbols"].Value, "\"\\1F44D\"")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles["suffix"].Value, "\" \"")
+	assert.Equal(t, css.CssRuleList[0].Type, COUNTER_STYLE_RULE)
 }
