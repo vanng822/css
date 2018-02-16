@@ -1,9 +1,9 @@
 package css
 
 import (
-	//"fmt"
-	"github.com/gorilla/css/scanner"
 	"strings"
+
+	"github.com/gorilla/css/scanner"
 )
 
 type blockParserContext struct {
@@ -78,7 +78,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
 				if token.Value == "{" {
-					break	
+					break
 				}
 			}
 			if context.State == STATE_PROPERTY {

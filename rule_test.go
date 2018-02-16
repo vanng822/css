@@ -13,4 +13,3 @@ func TestRuleTypeString(t *testing.T) {
 	assert.Equal(t, FONT_FACE_RULE.Text(), "@font-face")
 	assert.Equal(t, PAGE_RULE.Text(), "@page")
 }
-

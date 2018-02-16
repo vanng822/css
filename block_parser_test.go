@@ -1,9 +1,9 @@
 package css
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
-	//"fmt"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseBlock(t *testing.T) {
@@ -26,7 +26,7 @@ func TestParseBlockOneLine(t *testing.T) {
 
 func TestParseBlockBlankEnd(t *testing.T) {
 	css := ParseBlock("font-size: 27px; width: 10px")
-	
+
 	assert.Equal(t, len(css), 2)
 	assert.Equal(t, "27px", css["font-size"].Value)
 	assert.Equal(t, "10px", css["width"].Value)
@@ -34,7 +34,7 @@ func TestParseBlockBlankEnd(t *testing.T) {
 
 func TestParseBlockInportant(t *testing.T) {
 	css := ParseBlock("font-size: 27px; width: 10px !important")
-	
+
 	assert.Equal(t, len(css), 2)
 	assert.Equal(t, "27px", css["font-size"].Value)
 	assert.Equal(t, "10px", css["width"].Value)
@@ -43,7 +43,7 @@ func TestParseBlockInportant(t *testing.T) {
 
 func TestParseBlockWithBraces(t *testing.T) {
 	css := ParseBlock("{ font-size: 27px; width: 10px }")
-	
+
 	assert.Equal(t, len(css), 2)
 	assert.Equal(t, "27px", css["font-size"].Value)
 	assert.Equal(t, "10px", css["width"].Value)

@@ -1,5 +1,5 @@
 // Package css is for parsing css stylesheet.
-// 
+//
 //	import (
 //		"github.com/vanng822/css"
 //		"fmt"

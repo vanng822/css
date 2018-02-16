@@ -1,7 +1,6 @@
 package css
 
 import (
-	//"fmt"
 	"github.com/gorilla/css/scanner"
 )
 
@@ -19,8 +18,6 @@ func parseSelector(s *scanner.Scanner) string {
 
 	for {
 		token := s.Next()
-
-		//fmt.Printf("SELECTOR: %s:'%s'\n", token.Type.String(), token.Value)
 
 		if token.Type == scanner.TokenError || token.Type == scanner.TokenEOF {
 			break
