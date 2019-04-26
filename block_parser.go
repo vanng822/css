@@ -15,12 +15,12 @@ type blockParserContext struct {
 
 // ParseBlock take a string of a css block,
 // parses it and returns a map of css style declarations.
-func ParseBlock(csstext string) map[string]*CSSStyleDeclaration {
+func ParseBlock(csstext string) []*CSSStyleDeclaration {
 	s := scanner.New(csstext)
 	return parseBlock(s)
 }
 
-func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
+func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 	/* block       : '{' S* [ any | block | ATKEYWORD S* | ';' S* ]* '}' S*;
 	property    : IDENT;
 	value       : [ any | block | ATKEYWORD S* ]+;
@@ -30,7 +30,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 	              | '(' S* [any|unused]* ')' | '[' S* [any|unused]* ']'
 	              ] S*;
 	*/
-	decls := make(map[string]*CSSStyleDeclaration)
+	decls := make([]*CSSStyleDeclaration, 0)
 
 	context := &blockParserContext{
 		State:        STATE_NONE,
@@ -53,7 +53,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 				// we are ending without ; or }
 				// this can happen when we parse only css declaration
 				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-				decls[context.NowProperty] = decl
+				decls = append(decls, decl)
 			}
 			break
 		}
@@ -92,7 +92,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 			// should be no state or value
 			if token.Value == ";" {
 				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-				decls[context.NowProperty] = decl
+				decls = append(decls, decl)
 				context.NowProperty = ""
 				context.NowValue = ""
 				context.NowImportant = 0
@@ -101,7 +101,7 @@ func parseBlock(s *scanner.Scanner) map[string]*CSSStyleDeclaration {
 				if context.State == STATE_VALUE {
 					// only valid if state is still VALUE, could be ;}
 					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
-					decls[context.NowProperty] = decl
+					decls = append(decls, decl)
 				}
 				// we are done
 				return decls

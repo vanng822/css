@@ -40,7 +40,7 @@ func NewRule(ruleType RuleType) *CSSRule {
 	r := &CSSRule{
 		Type: ruleType,
 	}
-	r.Style.Styles = make(map[string]*CSSStyleDeclaration)
+	r.Style.Styles = make([]*CSSStyleDeclaration, 0)
 	r.Rules = make([]*CSSRule, 0)
 	return r
 }

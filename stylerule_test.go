@@ -1,16 +1,17 @@
 package css
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStyleRuleText(t *testing.T) {
 	sr := CSSStyleRule{}
 	sr.SelectorText = ".box"
-	sr.Styles = make(map[string]*CSSStyleDeclaration)
-	sr.Styles["width"] = NewCSSStyleDeclaration("width", "10px", 0)
-	sr.Styles["height"] = NewCSSStyleDeclaration("height", "100px", 0)
+	sr.Styles = make([]*CSSStyleDeclaration, 2)
+	sr.Styles[0] = NewCSSStyleDeclaration("width", "10px", 0)
+	sr.Styles[1] = NewCSSStyleDeclaration("height", "100px", 0)
 
-	assert.Equal(t, sr.Text(), ".box {\nheight: 100px;\nwidth: 10px\n}")
+	assert.Equal(t, sr.Text(), ".box {\nwidth: 10px;\nheight: 100px\n}")
 }

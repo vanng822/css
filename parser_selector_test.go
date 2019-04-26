@@ -23,21 +23,21 @@ func TestMultipleSelectors(t *testing.T) {
 func TestIdSelector(t *testing.T) {
 	css := Parse("#div { color: red;}")
 
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["color"].Value, "red")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[0].Value, "red")
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "#div")
 }
 
 func TestClassSelector(t *testing.T) {
 	css := Parse(".div { color: green;}")
 
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["color"].Value, "green")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[0].Value, "green")
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ".div")
 }
 
 func TestStarSelector(t *testing.T) {
 	css := Parse("* { text-rendering: optimizelegibility; }")
 
-	assert.Equal(t, "optimizelegibility", css.CssRuleList[0].Style.Styles["text-rendering"].Value)
+	assert.Equal(t, "optimizelegibility", css.CssRuleList[0].Style.Styles[0].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "*")
 }
 
@@ -47,10 +47,10 @@ func TestStarSelectorMulti(t *testing.T) {
 					}
 				* { text-rendering: optimizelegibility; }`)
 
-	assert.Equal(t, "150%", css.CssRuleList[0].Style.Styles["font-size"].Value)
+	assert.Equal(t, "150%", css.CssRuleList[0].Style.Styles[0].Value)
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "div .a")
 
-	assert.Equal(t, "optimizelegibility", css.CssRuleList[1].Style.Styles["text-rendering"].Value)
+	assert.Equal(t, "optimizelegibility", css.CssRuleList[1].Style.Styles[0].Value)
 	assert.Equal(t, css.CssRuleList[1].Style.SelectorText, "*")
 }
 
@@ -66,8 +66,8 @@ func TestMixedClassSelectors(t *testing.T) {
 							    	padding: 10px 0 0
 							    	}`, selector))
 
-		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles["border-collapse"].Value)
-		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles["padding"].Value)
+		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles[0].Value)
+		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles[1].Value)
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
@@ -97,8 +97,8 @@ func TestGenericSelectors(t *testing.T) {
 							    	padding: 10px 0 0
 							    	}`, selector))
 
-		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles["border-collapse"].Value)
-		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles["padding"].Value)
+		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles[0].Value)
+		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles[1].Value)
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
@@ -144,8 +144,8 @@ func TestFilterSelectors(t *testing.T) {
 							    	padding: 10px 0 0
 							    	}`, selector))
 
-		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles["border-collapse"].Value)
-		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles["padding"].Value)
+		assert.Equal(t, "separate", css.CssRuleList[0].Style.Styles[0].Value)
+		assert.Equal(t, "10px 0 0", css.CssRuleList[0].Style.Styles[1].Value)
 		assert.Equal(t, css.CssRuleList[0].Style.SelectorText, selector)
 	}
 }
@@ -159,9 +159,9 @@ func TestFontFace(t *testing.T) {
 				    body { font-family: "Bitstream Vera Serif Bold", serif }`)
 
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\"")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["src"].Value, "url(\"https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf\")")
-	assert.Equal(t, css.CssRuleList[1].Style.Styles["font-family"].Value, "\"Bitstream Vera Serif Bold\", serif")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[0].Value, "\"Bitstream Vera Serif Bold\"")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[1].Value, "url(\"https://mdn.mozillademos.org/files/2468/VeraSeBd.ttf\")")
+	assert.Equal(t, css.CssRuleList[1].Style.Styles[0].Value, "\"Bitstream Vera Serif Bold\", serif")
 	assert.Equal(t, css.CssRuleList[0].Type, FONT_FACE_RULE)
 }
 
@@ -171,7 +171,7 @@ func TestPage(t *testing.T) {
 				}`)
 
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, ":first")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["margin"].Value, "2in 3in")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[0].Value, "2in 3in")
 	assert.Equal(t, css.CssRuleList[0].Type, PAGE_RULE)
 }
 
@@ -183,8 +183,8 @@ func TestCounterStyle(t *testing.T) {
 	  }`)
 
 	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "winners-list")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["system"].Value, "cyclic")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["symbols"].Value, "\"\\1F44D\"")
-	assert.Equal(t, css.CssRuleList[0].Style.Styles["suffix"].Value, "\" \"")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[0].Value, "cyclic")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[1].Value, "\"\\1F44D\"")
+	assert.Equal(t, css.CssRuleList[0].Style.Styles[2].Value, "\" \"")
 	assert.Equal(t, css.CssRuleList[0].Type, COUNTER_STYLE_RULE)
 }
