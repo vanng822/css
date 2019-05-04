@@ -32,8 +32,6 @@ func parseCharset(s *scanner.Scanner) *CSSRule {
 	for {
 		token := s.Next()
 
-		//fmt.Printf("Import: %s:'%s'\n", token.Type.String(), token.Value)
-
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
 			return nil
 		}
