@@ -1,16 +1,26 @@
 package css
 
 import (
-	"strings"
-
 	"github.com/gorilla/css/scanner"
 )
 
 type blockParserContext struct {
 	State        State
 	NowProperty  string
-	NowValue     string
-	NowImportant int
+	NowValue     []*scanner.Token
+	NowImportant bool
+}
+
+func (context *blockParserContext) extractDeclaration() *CSSStyleDeclaration {
+	decl := CSSStyleDeclaration{
+		Property:  context.NowProperty,
+		Value:     &CSSValue{Tokens: context.NowValue},
+		Important: context.NowImportant,
+	}
+	context.NowProperty = ""
+	context.NowValue = make([]*scanner.Token, 0)
+	context.NowImportant = false
+	return &decl
 }
 
 // ParseBlock take a string of a css block,
@@ -35,8 +45,8 @@ func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 	context := &blockParserContext{
 		State:        STATE_NONE,
 		NowProperty:  "",
-		NowValue:     "",
-		NowImportant: 0,
+		NowValue:     make([]*scanner.Token, 0),
+		NowImportant: false,
 	}
 
 	for {
@@ -52,7 +62,7 @@ func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 			if context.State == STATE_VALUE {
 				// we are ending without ; or }
 				// this can happen when we parse only css declaration
-				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
+				decl := context.extractDeclaration()
 				decls = append(decls, decl)
 			}
 			break
@@ -62,18 +72,18 @@ func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 
 		case scanner.TokenS:
 			if context.State == STATE_VALUE {
-				context.NowValue += token.Value
+				context.NowValue = append(context.NowValue, token)
 			}
 		case scanner.TokenIdent:
 			if context.State == STATE_NONE {
 				context.State = STATE_PROPERTY
-				context.NowProperty = strings.TrimSpace(token.Value)
+				context.NowProperty += token.Value
 				break
 			}
 			if token.Value == "important" {
-				context.NowImportant = 1
+				context.NowImportant = true
 			} else {
-				context.NowValue += token.Value
+				context.NowValue = append(context.NowValue, token)
 			}
 		case scanner.TokenChar:
 			if context.State == STATE_NONE {
@@ -91,22 +101,19 @@ func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 			}
 			// should be no state or value
 			if token.Value == ";" {
-				decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
+				decl := context.extractDeclaration()
 				decls = append(decls, decl)
-				context.NowProperty = ""
-				context.NowValue = ""
-				context.NowImportant = 0
 				context.State = STATE_NONE
 			} else if token.Value == "}" { // last property in a block can have optional ;
 				if context.State == STATE_VALUE {
 					// only valid if state is still VALUE, could be ;}
-					decl := NewCSSStyleDeclaration(context.NowProperty, strings.TrimSpace(context.NowValue), context.NowImportant)
+					decl := context.extractDeclaration()
 					decls = append(decls, decl)
 				}
 				// we are done
 				return decls
 			} else if token.Value != "!" {
-				context.NowValue += token.Value
+				context.NowValue = append(context.NowValue, token)
 			}
 			break
 
@@ -132,7 +139,7 @@ func parseBlock(s *scanner.Scanner) []*CSSStyleDeclaration {
 		case scanner.TokenFunction:
 			fallthrough
 		case scanner.TokenSubstringMatch:
-			context.NowValue += token.Value
+			context.NowValue = append(context.NowValue, token)
 		}
 	}
 

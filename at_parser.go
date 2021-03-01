@@ -1,24 +1,19 @@
 package css
 
 import (
-	"strings"
-
 	"github.com/gorilla/css/scanner"
 )
 
-func newImportRule(statement string) *CSSRule {
-	statement = strings.TrimSpace(statement)
-	if statement != "" {
-		rule := NewRule(IMPORT_RULE)
-		rule.Style.SelectorText = statement
-		return rule
-	}
-
-	return nil
-}
-
-func parseImport(s *scanner.Scanner) *CSSRule {
+func parseAtNoBody(s *scanner.Scanner, ruleType RuleType) *CSSRule {
 	/*
+
+		Syntax:
+		@charset charset;
+
+		Example:
+		@charset "UTF-8";
+
+
 		Syntax:
 		@import url;                      or
 		@import url list-of-media-queries;
@@ -33,24 +28,29 @@ func parseImport(s *scanner.Scanner) *CSSRule {
 
 	*/
 
-	var statement string
+	parsed := make([]*scanner.Token, 0)
+Loop:
 	for {
 		token := s.Next()
-
-		//fmt.Printf("Import: %s:'%s'\n", token.Type.String(), token.Value)
 
 		if token.Type == scanner.TokenEOF || token.Type == scanner.TokenError {
 			return nil
 		}
 		// take everything for now
 		switch token.Type {
+		case scanner.TokenEOF, scanner.TokenError:
+			break Loop
 		case scanner.TokenChar:
 			if token.Value == ";" {
-				return newImportRule(statement)
+				break Loop
 			}
-			statement += token.Value
+			fallthrough
 		default:
-			statement += token.Value
+			parsed = append(parsed, token)
 		}
 	}
+
+	rule := NewRule(ruleType)
+	rule.Style.Selector = &CSSValue{Tokens: parsed}
+	return rule
 }
