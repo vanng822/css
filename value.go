@@ -26,6 +26,13 @@ Loop:
 	return &val
 }
 
+func NewCSSValueString(data string) *CSSValue {
+	data = strings.ReplaceAll(data, `"`, `\\"`)
+	data = `"` + data + `"`
+	token := scanner.Token{scanner.TokenString, data, 0, 0}
+	return &CSSValue{Tokens: []*scanner.Token{&token}}
+}
+
 func (v *CSSValue) Text() string {
 	var b strings.Builder
 	for _, t := range v.Tokens {
