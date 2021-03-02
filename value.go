@@ -34,6 +34,21 @@ func NewCSSValueString(data string) *CSSValue {
 	return &CSSValue{Tokens: []*scanner.Token{&token}}
 }
 
+func (v *CSSValue) SplitOnToken(split *scanner.Token) []*CSSValue {
+	res := make([]*CSSValue, 0)
+	current := make([]*scanner.Token, 0)
+	for _, tok := range v.Tokens {
+		if tok.Type == split.Type && tok.Value == split.Value {
+			res = append(res, &CSSValue{Tokens: current})
+			current = make([]*scanner.Token, 0)
+		} else {
+			current = append(current, tok)
+		}
+	}
+	res = append(res, &CSSValue{Tokens: current})
+	return res
+}
+
 func (v *CSSValue) Text() string {
 	var b strings.Builder
 	for _, t := range v.Tokens {

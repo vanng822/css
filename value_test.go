@@ -3,6 +3,7 @@ package css
 import (
 	"testing"
 
+	"github.com/gorilla/css/scanner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,4 +32,15 @@ func TestNewCSSValueString(t *testing.T) {
 			assert.Equal(t, val.ParsedText(), c.inp)
 		})
 	}
+}
+
+func TestSplitOnToken(t *testing.T) {
+	val := NewCSSValue(`monospace, font-name, "font3",sans-serif`)
+	split := val.SplitOnToken(&scanner.Token{Type: scanner.TokenChar, Value: ","})
+
+	assert.Equal(t, len(split), 4)
+	assert.Equal(t, split[0].ParsedText(), "monospace")
+	assert.Equal(t, split[1].ParsedText(), "font-name")
+	assert.Equal(t, split[2].ParsedText(), "font3")
+	assert.Equal(t, split[3].ParsedText(), "sans-serif")
 }
