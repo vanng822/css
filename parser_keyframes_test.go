@@ -18,13 +18,13 @@ func TestKeyFrames(t *testing.T) {
 				width: 100%;
 			}
   }`)
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "slidein")
+	assert.Equal(t, css.CssRuleList[0].Style.Selector.Text(), "slidein")
 	assert.Equal(t, css.CssRuleList[0].Type, KEYFRAMES_RULE)
 	assert.Equal(t, len(css.CssRuleList[0].Rules), 2)
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.SelectorText, "from")
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value, "100%")
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[1].Value, "300%")
-	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.SelectorText, "to")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Selector.Text(), "from")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value.Text(), "100%")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[1].Value.Text(), "300%")
+	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.Selector.Text(), "to")
 }
 
 func TestKeyFramesPercent(t *testing.T) {
@@ -34,14 +34,14 @@ func TestKeyFramesPercent(t *testing.T) {
 		50% { top: 10px; }
 		100% { top: 0; }
   }`)
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "identifier")
+	assert.Equal(t, css.CssRuleList[0].Style.Selector.Text(), "identifier")
 	assert.Equal(t, css.CssRuleList[0].Type, KEYFRAMES_RULE)
 	assert.Equal(t, len(css.CssRuleList[0].Rules), 4)
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.SelectorText, "0%")
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value, "0")
-	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.SelectorText, "50%")
-	assert.Equal(t, css.CssRuleList[0].Rules[2].Style.SelectorText, "50%")
-	assert.Equal(t, css.CssRuleList[0].Rules[3].Style.SelectorText, "100%")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Selector.Text(), "0%")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value.Text(), "0")
+	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.Selector.Text(), "50%")
+	assert.Equal(t, css.CssRuleList[0].Rules[2].Style.Selector.Text(), "50%")
+	assert.Equal(t, css.CssRuleList[0].Rules[3].Style.Selector.Text(), "100%")
 }
 
 func TestWebKitKeyFramesPercent(t *testing.T) {
@@ -51,12 +51,12 @@ func TestWebKitKeyFramesPercent(t *testing.T) {
 		50% { top: 10px; }
 		100% { top: 0; }
   }`)
-	assert.Equal(t, css.CssRuleList[0].Style.SelectorText, "identifier")
+	assert.Equal(t, css.CssRuleList[0].Style.Selector.Text(), "identifier")
 	assert.Equal(t, css.CssRuleList[0].Type, WEBKIT_KEYFRAMES_RULE)
 	assert.Equal(t, len(css.CssRuleList[0].Rules), 4)
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.SelectorText, "0%")
-	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value, "0")
-	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.SelectorText, "50%")
-	assert.Equal(t, css.CssRuleList[0].Rules[2].Style.SelectorText, "50%")
-	assert.Equal(t, css.CssRuleList[0].Rules[3].Style.SelectorText, "100%")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Selector.Text(), "0%")
+	assert.Equal(t, css.CssRuleList[0].Rules[0].Style.Styles[0].Value.Text(), "0")
+	assert.Equal(t, css.CssRuleList[0].Rules[1].Style.Selector.Text(), "50%")
+	assert.Equal(t, css.CssRuleList[0].Rules[2].Style.Selector.Text(), "50%")
+	assert.Equal(t, css.CssRuleList[0].Rules[3].Style.Selector.Text(), "100%")
 }

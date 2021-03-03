@@ -6,21 +6,22 @@ import (
 
 type CSSStyleDeclaration struct {
 	Property  string
-	Value     string
-	Important int
+	Value     *CSSValue
+	Important bool
 }
 
-func NewCSSStyleDeclaration(property, value string, important int) *CSSStyleDeclaration {
+func NewCSSStyleDeclaration(property, value string, important bool) *CSSStyleDeclaration {
 	return &CSSStyleDeclaration{
 		Property:  property,
-		Value:     value,
+		Value:     NewCSSValue(value),
 		Important: important,
 	}
 }
 
 func (decl *CSSStyleDeclaration) Text() string {
-	if decl.Important == 1 {
-		return fmt.Sprintf("%s: %s !important", decl.Property, decl.Value)
+	res := fmt.Sprintf("%s: %s", decl.Property, decl.Value.Text())
+	if decl.Important {
+		res += " !important"
 	}
-	return fmt.Sprintf("%s: %s", decl.Property, decl.Value)
+	return res
 }
