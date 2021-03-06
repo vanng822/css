@@ -1,7 +1,6 @@
 package css
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gorilla/css/scanner"
@@ -128,7 +127,7 @@ func Parse(csstext string) *CSSStyleSheet {
 				context.NowRuleType = COUNTER_STYLE_RULE
 				parseRule(context, s, css)
 			default:
-				log.Println(fmt.Printf("Skip unsupported atrule: %s", token.Value))
+				log.Printf("Skip unsupported atrule: %s", token.Value)
 				skipRules(s)
 				context.resetContextStyleRule()
 			}
