@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/gorilla/css v1.0.1
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
